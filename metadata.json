@@ -1,0 +1,6 @@
+{
+  "name": "AI Quiz Generator",
+  "description": "An application that generates interactive multiple-choice quizzes from user-provided text in a PDF file using the Gemini API. Users can customize the number of questions, difficulty, question type, and set a time limit.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
