@@ -159,19 +159,32 @@ const UploadView: React.FC<UploadViewProps> = ({ onQuizGenerate, isLoading }) =>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                     <Label className="dark:text-slate-300">Count</Label>
-                    <Input type="number" value={numQuestions} onChange={(e) => setNumQuestions(e.target.value ? Number(e.target.value) : '')} className="dark:bg-slate-800 dark:text-white" />
+                    <Input type="number" min="1" max="100" value={numQuestions} onChange={(e) => setNumQuestions(e.target.value ? Number(e.target.value) : '')} className="dark:bg-slate-800 dark:text-white" />
                 </div>
                 <div className="space-y-2">
                     <Label className="dark:text-slate-300">Difficulty</Label>
                     <Select value={difficulty} onValueChange={(v) => setDifficulty(v as any)}>
-                        <SelectTrigger className="dark:bg-slate-800 dark:text-white"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="dark:bg-slate-800 dark:text-white"><SelectValue>{difficultyOptions.find(o => o.value === difficulty)?.label}</SelectValue></SelectTrigger>
                         <SelectContent>
                             {difficultyOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
                         </SelectContent>
                     </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label className="dark:text-slate-300">Language</Label>
+                    <Select value={selectedLanguage} onValueChange={(v) => setSelectedLanguage(v as any)}>
+                        <SelectTrigger className="dark:bg-slate-800 dark:text-white"><SelectValue>{languageOptions.find(o => o.value === selectedLanguage)?.label}</SelectValue></SelectTrigger>
+                        <SelectContent>
+                            {languageOptions.map(o => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-2">
+                    <Label className="dark:text-slate-300">Time (Mins)</Label>
+                    <Input type="number" min="1" max="120" value={timeLimit} onChange={(e) => setTimeLimit(e.target.value ? Number(e.target.value) : '')} className="dark:bg-slate-800 dark:text-white" />
                 </div>
             </div>
 

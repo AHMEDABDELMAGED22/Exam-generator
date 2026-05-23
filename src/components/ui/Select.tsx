@@ -60,7 +60,9 @@ const SelectValue = React.forwardRef<
   HTMLSpanElement,
   React.HTMLAttributes<HTMLSpanElement> & { placeholder?: string }
 >(({ children, placeholder }, ref) => {
-  return <span ref={ref}>{children || placeholder}</span>;
+  const { value } = useContext(SelectContext);
+  const displayValue = value ? value.charAt(0).toUpperCase() + value.slice(1) : undefined;
+  return <span ref={ref}>{children || displayValue || placeholder}</span>;
 });
 SelectValue.displayName = 'SelectValue';
 
