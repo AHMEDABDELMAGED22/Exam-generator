@@ -151,6 +151,12 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ quizData, onFinish })
     }
   };
 
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
+    }
+  };
+
   if (showResults) {
     return (
         <ResultsDetailView 
@@ -212,7 +218,15 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ quizData, onFinish })
             </>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex gap-4">
+        <Button 
+            onClick={handlePrevious} 
+            disabled={currentQuestionIndex === 0}
+            variant="outline"
+            className="w-full py-4 rounded-xl"
+        >
+          {isRtl ? "السؤال السابق" : "Previous Question"}
+        </Button>
         <Button onClick={handleNext} className="w-full py-4 rounded-xl">
           {currentQuestionIndex === totalQuestions - 1 ? (isRtl ? "إنهاء المراجعة" : "Finish Review") : (isRtl ? "السؤال التالي" : "Next Question")}
         </Button>

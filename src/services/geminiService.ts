@@ -76,7 +76,7 @@ const getPrompt = (sourceText: string, numQuestions: number, difficulty: string,
         }
 
         const difficultyMap: { [key: string]: string } = { easy: 'سهل', medium: 'متوسط', hard: 'صعب' };
-        const customPromptInstruction = customPrompt ? `9.  **تركيز مخصص:** ${customPrompt}\n` : '';
+        const customPromptInstruction = customPrompt ? `9.  **تركيز مخصص:** ${customPrompt}\n10. **هام جداً:** يجب أن تظل المخرجات بصيغة JSON صحيحة بالكامل وتتبع المخطط المطلوب (schema) حتى مع التركيز المخصص. لا تضف أي نص أو مقدمة خارج الـ JSON.\n` : '';
         return `
             بناءً على النص التالي، قم بإنشاء اختبار باللغة العربية.
 
@@ -106,7 +106,7 @@ const getPrompt = (sourceText: string, numQuestions: number, difficulty: string,
         typeInstruction = "3. Question types: A mix of Multiple Choice and True/False.";
     }
 
-    const customPromptInstruction = customPrompt ? `9.  **Custom Focus:** ${customPrompt}\n` : '';
+    const customPromptInstruction = customPrompt ? `9.  **Custom Focus:** ${customPrompt}\n10. **CRITICAL:** You must strictly return ONLY valid JSON matching the schema, even when applying the custom focus. Do not add conversational text.\n` : '';
     return `
         Based on the following text, generate a quiz.
         1. Create exactly ${numQuestions} questions.
@@ -137,7 +137,7 @@ export async function generateQuizFromText(
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -146,8 +146,11 @@ export async function generateQuizFromText(
       },
     });
 
-    const jsonText = response.text;
+    let jsonText = response.text;
     if (!jsonText) throw new Error("No content generated");
+    
+    // Clean up markdown block formatting if present
+    jsonText = jsonText.replace(/^```(json)?\s*/i, '').replace(/\s*```$/i, '').trim();
     
     const quiz: Quiz = JSON.parse(jsonText);
     
