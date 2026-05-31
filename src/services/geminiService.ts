@@ -121,7 +121,7 @@ export async function generateQuizFromText(
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -157,8 +157,21 @@ export async function generateQuizFromText(
         processingTime: processingTime,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error generating quiz:", error);
+    
+    // Check for 429 Too Many Requests / Quota Exceeded
+    const errorMessage = error?.message || String(error);
+    if (
+        error?.status === 429 || 
+        error?.status === "RESOURCE_EXHAUSTED" || 
+        errorMessage.includes('429') || 
+        errorMessage.includes('quota') || 
+        errorMessage.includes('Quota')
+    ) {
+        throw new Error("API Quota Exceeded: You have reached the limit for the Gemini API free tier. Please wait a minute and try again.");
+    }
+
     throw new Error("Failed to generate quiz. Please try again.");
   }
 }
