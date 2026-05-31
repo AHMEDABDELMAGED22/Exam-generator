@@ -5,28 +5,14 @@ import { QuizData, Quiz, Language, QuestionType } from '../types';
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
 
 const getQuizSchema = (language: Language, questionType: QuestionType): Schema => {
-  let optionsDescription = "An array of options.";
+  let optionsDescription = "An array of options (4 for MCQ, 2 for True/False).";
   
-  if (language === 'ar') {
-     if (questionType === 'true_false') {
-         optionsDescription = "مصفوفة تحتوي بالضبط على عنصرين: 'صح' و 'خطأ'.";
-     } else if (questionType === 'mcq') {
-         optionsDescription = "يجب أن تحتوي هذه المصفوفة بالضبط على 4 خيارات.";
-     } else if (questionType === 'essay') {
-         optionsDescription = "يجب أن تكون هذه المصفوفة فارغة للأسئلة المقالية.";
-     } else {
-         optionsDescription = "مصفوفة من الخيارات (4 للمتعدد، 2 للصح/خطأ).";
-     }
-  } else {
-     if (questionType === 'true_false') {
-         optionsDescription = "An array containing EXACTLY two strings: 'True' and 'False'.";
-     } else if (questionType === 'mcq') {
-         optionsDescription = "This array must contain EXACTLY 4 multiple-choice options.";
-     } else if (questionType === 'essay') {
-         optionsDescription = "This array must be empty for essay questions.";
-     } else {
-         optionsDescription = "An array of options (4 for MCQ, 2 for True/False).";
-     }
+  if (questionType === 'true_false') {
+      optionsDescription = "An array containing EXACTLY two strings: 'True' and 'False'.";
+  } else if (questionType === 'mcq') {
+      optionsDescription = "This array must contain EXACTLY 4 multiple-choice options.";
+  } else if (questionType === 'essay') {
+      optionsDescription = "This array must be empty for essay questions.";
   }
 
   return {
@@ -34,24 +20,22 @@ const getQuizSchema = (language: Language, questionType: QuestionType): Schema =
     properties: {
       title: {
         type: Type.STRING,
-        description: language === 'ar' 
-          ? "عنوان قصير وجذاب للاختبار بناءً على النص المصدر."
-          : "A short, engaging title for the quiz based on the source text."
+        description: "A short, engaging title for the quiz based on the source text."
       },
       questions: {
         type: Type.ARRAY,
-        description: language === 'ar' ? "مجموعة من أسئلة الاختبار." : "An array of quiz questions.",
+        description: "An array of quiz questions.",
         items: {
           type: Type.OBJECT,
           properties: {
-            question: { type: Type.STRING, description: language === 'ar' ? "نص السؤال." : "The question text." },
+            question: { type: Type.STRING, description: "The question text." },
             options: {
               type: Type.ARRAY,
               description: optionsDescription,
               items: { type: Type.STRING }
             },
-            answer: { type: Type.STRING, description: language === 'ar' ? "الإجابة النموذجية أو المفتاحية للسؤال." : "The model or key answer for the question." },
-            explanation: { type: Type.STRING, description: language === 'ar' ? "شرح مفصل للإجابة وكيفية الوصول إليها من النص." : "A detailed explanation of the answer and how it's derived from the text." }
+            answer: { type: Type.STRING, description: "The model or key answer for the question." },
+            explanation: { type: Type.STRING, description: "A detailed explanation of the answer and how it's derived from the text." }
           },
           required: ["question", "options", "answer", "explanation"]
         }
